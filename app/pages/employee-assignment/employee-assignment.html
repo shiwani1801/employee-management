@@ -1,0 +1,173 @@
+
+<div class="assignment-container">
+
+  <div class="page-header">
+    <div class="header-content">
+      <h2>Employee Assignment</h2>
+      <p>Manage and assign employees to company projects</p>
+    </div>
+
+    <button class="back-btn" routerLink="/projects">
+      ← Back to Projects
+    </button>
+  </div>
+
+  <div class="message success" *ngIf="successMessage">
+    ✓ {{ successMessage }}
+  </div>
+
+  <div class="message error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <div class="project-selection">
+    <label for="project">Select Project</label>
+
+    <select
+      id="project"
+      [(ngModel)]="selectedProjectId"
+      (ngModelChange)="onProjectChange()">
+
+      <option [ngValue]="null">-- Select Project --</option>
+
+      <option *ngFor="let project of projects"
+              [ngValue]="project.id">
+        {{ project.projectName }}
+      </option>
+    </select>
+  </div>
+
+  <div *ngIf="selectedProjectId !== null">
+
+    <div class="selected-project"
+         *ngIf="getSelectedProject() as project">
+
+      <div>
+        <span class="project-label">Selected Project</span>
+        <h3>{{ project.projectName }}</h3>
+      </div>
+
+      <span class="project-status">{{ project.status }}</span>
+    </div>
+
+    <div class="section-card">
+
+      <div class="section-header">
+        <div>
+          <h3>Available Employees</h3>
+          <p>Select employees to assign to this project</p>
+        </div>
+
+        <span class="count">{{ employees.length }} Employees</span>
+      </div>
+
+      <div class="employee-grid">
+
+        <div class="employee-card"
+             *ngFor="let employee of employees">
+
+          <div class="employee-avatar">
+            {{ employee.fullName.charAt(0).toUpperCase() }}
+          </div>
+
+          <div class="employee-info">
+            <h4>{{ employee.fullName }}</h4>
+            <p>{{ employee.email }}</p>
+            <span>{{ employee.department }}</span>
+            <small>{{ employee.designation }}</small>
+          </div>
+
+          <button class="assign-btn"
+                  *ngIf="!isEmployeeAssigned(employee.id!)"
+                  [disabled]="loading"
+                  (click)="assignEmployee(employee.id!)">
+            + Assign
+          </button>
+
+          <button class="remove-btn"
+                  *ngIf="isEmployeeAssigned(employee.id!)"
+                  [disabled]="loading"
+                  (click)="removeEmployee(employee.id!)">
+            Remove
+          </button>
+
+        </div>
+
+        <div class="empty-state" *ngIf="employees.length === 0">
+          No employees found.
+        </div>
+
+      </div>
+    </div>
+
+    <div class="section-card assigned-section">
+
+      <div class="section-header">
+        <div>
+          <h3>Assigned Employees</h3>
+          <p>Employees currently working on this project</p>
+
+          <div class="assigned-project"
+               *ngIf="getSelectedProject() as project">
+            <span>Assigned Project:</span>
+            <strong>{{ project.projectName }}</strong>
+          </div>
+        </div>
+
+        <span class="count assigned-count">
+          {{ getSelectedProject()?.employees?.length || 0 }} Assigned
+        </span>
+      </div>
+
+      <div class="assigned-list">
+
+        <div class="assigned-item"
+             *ngFor="let employee of getSelectedProject()?.employees">
+
+          <div class="assigned-info">
+
+            <div class="employee-avatar small-avatar">
+              {{ employee.fullName.charAt(0).toUpperCase() }}
+            </div>
+
+            <div class="assigned-details">
+              <h4>{{ employee.fullName }}</h4>
+              <p>
+                {{ employee.department }} |
+                {{ employee.designation }}
+              </p>
+            </div>
+
+          </div>
+
+          <button class="remove-btn"
+                  [disabled]="loading"
+                  (click)="removeEmployee(employee.id!)">
+            Remove
+          </button>
+
+        </div>
+
+        <div class="empty-state"
+             *ngIf="!getSelectedProject()?.employees?.length">
+          No employees assigned to this project yet.
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="select-message"
+       *ngIf="selectedProjectId === null">
+
+    <div class="select-icon">📁</div>
+    <h3>Select a Project</h3>
+
+    <p>
+      Please choose a project above to manage employee assignments.
+    </p>
+
+  </div>
+
+</div>

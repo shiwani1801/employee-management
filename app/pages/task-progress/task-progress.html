@@ -1,0 +1,306 @@
+
+<div class="progress-container">
+
+  <!-- Page Header -->
+  <div class="page-header">
+
+    <div>
+      <h2>Task Progress Dashboard</h2>
+      <p>Monitor task completion, employee assignments and deadlines</p>
+    </div>
+
+    <div class="header-actions">
+
+      <button class="refresh-btn" (click)="loadTaskProgress()">
+        Refresh Report
+      </button>
+
+      <button class="back-btn" routerLink="/tasks">
+        ← Back to Tasks
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" *ngIf="loading">
+    Loading task progress...
+  </div>
+
+  <!-- Error -->
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Dashboard -->
+  <div *ngIf="!loading && !errorMessage">
+
+    <!-- Summary Cards -->
+    <div class="summary-grid">
+
+      <div class="summary-card total-card">
+        <div class="card-icon">📋</div>
+        <div>
+          <p>Total Tasks</p>
+          <h3>{{ totalTasks }}</h3>
+        </div>
+      </div>
+
+      <div class="summary-card pending-card">
+        <div class="card-icon">⏳</div>
+        <div>
+          <p>To Do Tasks</p>
+          <h3>{{ pendingTasks }}</h3>
+        </div>
+      </div>
+
+      <div class="summary-card progress-card">
+        <div class="card-icon">🔄</div>
+        <div>
+          <p>In Progress</p>
+          <h3>{{ inProgressTasks }}</h3>
+        </div>
+      </div>
+
+      <div class="summary-card review-card">
+        <div class="card-icon">👀</div>
+        <div>
+          <p>Under Review</p>
+          <h3>{{ reviewTasks }}</h3>
+        </div>
+      </div>
+
+      <div class="summary-card completed-card">
+        <div class="card-icon">✅</div>
+        <div>
+          <p>Completed Tasks</p>
+          <h3>{{ completedTasks }}</h3>
+        </div>
+      </div>
+
+      <div class="summary-card overdue-card">
+        <div class="card-icon">⚠️</div>
+        <div>
+          <p>Overdue Tasks</p>
+          <h3>{{ overdueTasks }}</h3>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Overall Progress -->
+    <div class="overall-progress-card">
+
+      <div class="section-heading">
+
+        <div>
+          <h3>Overall Task Completion</h3>
+          <p>Percentage of tasks successfully completed</p>
+        </div>
+
+        <strong class="percentage">
+          {{ getProgressPercentage() }}%
+        </strong>
+
+      </div>
+
+      <div class="progress-track">
+
+        <div
+          class="progress-fill"
+          [style.width.%]="getProgressPercentage()">
+        </div>
+
+      </div>
+
+      <p class="progress-description">
+        {{ completedTasks }} out of {{ totalTasks }} tasks completed
+      </p>
+
+    </div>
+
+    <!-- Project-wise Progress -->
+    <div class="project-progress-wrapper">
+
+      <div class="section-heading">
+        <div>
+          <h3>Project-wise Progress</h3>
+          <p>Track task completion for each project</p>
+        </div>
+      </div>
+
+      <div
+        class="empty-state"
+        *ngIf="projectProgress.length === 0">
+
+        No project progress available.
+
+      </div>
+
+      <div
+        class="project-progress-grid"
+        *ngIf="projectProgress.length > 0">
+
+        <div
+          class="project-progress-card"
+          *ngFor="let project of projectProgress">
+
+          <h4>{{ project.projectName }}</h4>
+
+          <div class="project-statistics">
+
+            <span>
+              Total: {{ project.totalTasks }}
+            </span>
+
+            <span>
+              Completed: {{ project.completedTasks }}
+            </span>
+
+          </div>
+
+          <div class="progress-track">
+
+            <div
+              class="progress-fill"
+              [style.width.%]="project.progressPercentage">
+            </div>
+
+          </div>
+
+          <div class="project-progress-footer">
+
+            <span>
+              {{ project.progressPercentage }}% Complete
+            </span>
+
+            <span>
+              {{ project.inProgressTasks }} In Progress
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Task Progress Table -->
+    <div class="table-wrapper">
+
+      <div class="table-heading">
+
+        <div>
+          <h3>Task Progress Details</h3>
+          <p>Track the status of every assigned task</p>
+        </div>
+
+        <span class="task-count">
+          {{ totalTasks }} Tasks
+        </span>
+
+      </div>
+
+      <div
+        class="empty-state"
+        *ngIf="tasks.length === 0">
+
+        <h3>No Tasks Found</h3>
+        <p>Create tasks to start tracking progress.</p>
+
+      </div>
+
+      <table *ngIf="tasks.length > 0">
+
+        <thead>
+
+          <tr>
+            <th>ID</th>
+            <th>Task Title</th>
+            <th>Project</th>
+            <th>Assigned Employee</th>
+            <th>Priority</th>
+            <th>Deadline</th>
+            <th>Status</th>
+            <th>Deadline Check</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let task of tasks">
+
+            <td>#{{ task.id }}</td>
+
+            <td class="task-title">
+              <strong>{{ task.title }}</strong>
+            </td>
+
+            <td>
+              {{ task.project?.projectName || 'Not assigned' }}
+            </td>
+
+            <td>
+              {{ task.employee?.fullName || 'Not assigned' }}
+            </td>
+
+            <td>
+              <span
+                class="priority"
+                [ngClass]="task.priority?.toLowerCase()">
+
+                {{ task.priority || 'MEDIUM' }}
+
+              </span>
+            </td>
+
+            <td>
+              {{ task.deadline ? (task.deadline | date:'dd MMM yyyy') : 'N/A' }}
+            </td>
+
+            <td>
+
+              <span
+                class="status"
+                [ngClass]="getStatusClass(task.status)">
+
+                {{ formatStatus(task.status) }}
+
+              </span>
+
+            </td>
+
+            <td>
+
+              <span
+                *ngIf="isOverdue(task)"
+                class="deadline-overdue">
+
+                Overdue
+
+              </span>
+
+              <span
+                *ngIf="!isOverdue(task)"
+                class="deadline-normal">
+
+                On Track
+
+              </span>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>

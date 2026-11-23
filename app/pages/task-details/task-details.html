@@ -1,0 +1,99 @@
+
+<div class="details-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h2>Task Details</h2>
+      <p>View complete task information and assignment details</p>
+    </div>
+
+    <div class="header-actions">
+      <button
+        class="edit-btn"
+        *ngIf="task"
+        [routerLink]="['/edit-task', task.id]">
+        Edit Task
+      </button>
+
+      <button class="back-btn" routerLink="/tasks">
+        ← Back to Tasks
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" *ngIf="loading">
+    Loading task details...
+  </div>
+
+  <!-- Error -->
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Task Details -->
+  <div class="details-card" *ngIf="!loading && task">
+
+    <!-- Task Header -->
+    <div class="card-heading">
+      <div>
+        <span class="task-id">TASK #{{ task.id }}</span>
+        <h3>{{ task.title }}</h3>
+      </div>
+
+      <span
+        class="status"
+        [ngClass]="getStatusClass(task.status)">
+        {{ task.status.replace('_', ' ') }}
+      </span>
+    </div>
+
+    <!-- Description -->
+    <div class="description-section">
+      <h4>Task Description</h4>
+      <p>{{ task.description || 'No description provided.' }}</p>
+    </div>
+
+    <!-- Task Information -->
+    <div class="details-grid">
+
+      <div class="detail-item">
+        <span class="detail-label">Project Name</span>
+        <strong>
+          {{ task.project?.projectName || 'Not assigned' }}
+        </strong>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-label">Assigned Employee</span>
+        <strong>
+          {{ task.employee?.fullName || 'Not assigned' }}
+        </strong>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-label">Start Date</span>
+        <strong>{{ task.startDate | date:'dd MMM yyyy' }}</strong>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-label">Deadline</span>
+        <strong>{{ task.deadline | date:'dd MMM yyyy' }}</strong>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-label">Task Status</span>
+        <strong>{{ task.status.replace('_', ' ') }}</strong>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-label">Task ID</span>
+        <strong>#{{ task.id }}</strong>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

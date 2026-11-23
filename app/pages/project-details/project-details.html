@@ -1,0 +1,116 @@
+<div class="details-container">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h2>Project Details</h2>
+      <p>View project information and assigned employees</p>
+    </div>
+
+    <button class="back-btn" (click)="goBack()">
+      ← Back to Projects
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-message" *ngIf="loading">
+    Loading project details...
+  </div>
+
+  <!-- Error -->
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Project Information -->
+  <div class="details-content" *ngIf="!loading && project">
+
+    <div class="project-title-card">
+      <div>
+        <span class="section-label">PROJECT NAME</span>
+        <h2>{{ project.projectName }}</h2>
+        <p>{{ project.description || 'No description available.' }}</p>
+      </div>
+
+      <span class="project-status"
+            [ngClass]="project.status.toLowerCase()">
+        {{ project.status.replace('_', ' ') }}
+      </span>
+    </div>
+
+    <!-- Project Information Cards -->
+    <div class="information-grid">
+
+      <div class="info-card">
+        <span class="info-label">Project ID</span>
+        <h3>#{{ project.id }}</h3>
+      </div>
+
+      <div class="info-card">
+        <span class="info-label">Start Date</span>
+        <h3>{{ project.startDate | date:'dd MMM yyyy' }}</h3>
+      </div>
+
+      <div class="info-card">
+        <span class="info-label">End Date</span>
+        <h3>{{ project.endDate | date:'dd MMM yyyy' }}</h3>
+      </div>
+
+      <div class="info-card">
+        <span class="info-label">Assigned Employees</span>
+        <h3>{{ project.employees?.length || 0 }}</h3>
+      </div>
+
+    </div>
+
+    <!-- Assigned Employees -->
+    <div class="employees-section">
+
+      <div class="section-header">
+        <div>
+          <h3>Assigned Employees</h3>
+          <p>Employees working on this project</p>
+        </div>
+
+        <span class="employee-count">
+          {{ project.employees?.length || 0 }} Employees
+        </span>
+      </div>
+
+      <div class="employee-table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Employee Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Department</th>
+              <th>Designation</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let employee of project.employees">
+              <td class="employee-name">
+                {{ employee.fullName }}
+              </td>
+              <td>{{ employee.email }}</td>
+              <td>{{ employee.phone || 'N/A' }}</td>
+              <td>{{ employee.department }}</td>
+              <td>{{ employee.designation }}</td>
+            </tr>
+
+            <tr *ngIf="!project.employees?.length">
+              <td colspan="5" class="empty-message">
+                No employees assigned to this project yet.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

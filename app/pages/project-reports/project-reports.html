@@ -1,0 +1,252 @@
+
+<div class="reports-container">
+
+  <!-- Header -->
+  <div class="page-header">
+
+    <div>
+      <h2>Project Performance Reports</h2>
+      <p>Monitor project performance, completion and employee assignments</p>
+    </div>
+
+    <div class="header-actions">
+
+      <button
+        class="refresh-btn"
+        (click)="loadReports()"
+        [disabled]="loading">
+
+        ↻ Refresh Reports
+
+      </button>
+
+      <button class="back-btn" routerLink="/projects">
+        ← Back to Projects
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- Loading -->
+  <div class="loading" *ngIf="loading">
+    Loading project reports...
+  </div>
+
+  <!-- Error -->
+  <div class="error-message" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Report Content -->
+  <div *ngIf="report && !loading && !errorMessage">
+
+    <!-- Summary Cards -->
+    <div class="summary-grid">
+
+      <div class="summary-card total-card">
+        <div class="card-icon">📁</div>
+        <div>
+          <h3>Total Projects</h3>
+          <h2>{{ report.totalProjects }}</h2>
+        </div>
+      </div>
+
+      <div class="summary-card completed-card">
+        <div class="card-icon">✓</div>
+        <div>
+          <h3>Completed Projects</h3>
+          <h2>{{ report.completedProjects }}</h2>
+        </div>
+      </div>
+
+      <div class="summary-card progress-card">
+        <div class="card-icon">↗</div>
+        <div>
+          <h3>In Progress</h3>
+          <h2>{{ report.inProgressProjects }}</h2>
+        </div>
+      </div>
+
+      <div class="summary-card planned-card">
+        <div class="card-icon">◷</div>
+        <div>
+          <h3>Planned Projects</h3>
+          <h2>{{ report.plannedProjects }}</h2>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Average Progress -->
+    <div class="average-card">
+
+      <div class="average-header">
+
+        <div>
+          <h3>Average Project Progress</h3>
+          <p>Overall completion across all projects</p>
+        </div>
+
+        <h2>{{ report.averageProgress }}%</h2>
+
+      </div>
+
+      <div class="average-progress-bar">
+
+        <div
+          class="average-progress-fill"
+          [style.width.%]="getProgressValue(report.averageProgress)">
+        </div>
+
+      </div>
+
+      <p class="progress-description">
+        Average completion of all registered projects
+      </p>
+
+    </div>
+
+    <!-- Project Status Overview -->
+    <div class="status-overview">
+
+      <div class="overview-heading">
+        <h3>Project Status Overview</h3>
+        <p>Distribution of projects by their current status</p>
+      </div>
+
+      <div class="status-overview-grid">
+
+        <div class="status-overview-card">
+          <span class="status-dot completed-dot"></span>
+          <div>
+            <p>Completed</p>
+            <h3>{{ report.completedProjects }}</h3>
+          </div>
+        </div>
+
+        <div class="status-overview-card">
+          <span class="status-dot progress-dot"></span>
+          <div>
+            <p>In Progress</p>
+            <h3>{{ report.inProgressProjects }}</h3>
+          </div>
+        </div>
+
+        <div class="status-overview-card">
+          <span class="status-dot planned-dot"></span>
+          <div>
+            <p>Planned</p>
+            <h3>{{ report.plannedProjects }}</h3>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Project Details -->
+    <div class="table-card">
+
+      <div class="table-header">
+
+        <div>
+          <h3>Project-wise Performance Report</h3>
+          <p>Detailed project status and employee assignments</p>
+        </div>
+
+        <span class="project-count">
+          {{ report.projectDetails.length }} Projects
+        </span>
+
+      </div>
+
+      <!-- Empty State -->
+      <div
+        class="empty-state"
+        *ngIf="report.projectDetails.length === 0">
+
+        <h3>No Project Reports Available</h3>
+        <p>Create projects to start tracking performance.</p>
+
+      </div>
+
+      <!-- Table -->
+      <div
+        class="table-responsive"
+        *ngIf="report.projectDetails.length > 0">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Project Name</th>
+              <th>Status</th>
+              <th>Progress</th>
+              <th>Assigned Employees</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            <tr *ngFor="let project of report.projectDetails">
+
+              <td>#{{ project.id }}</td>
+
+              <td class="project-name">
+                <strong>{{ project.projectName }}</strong>
+              </td>
+
+              <td>
+                <span
+                  class="status-badge"
+                  [ngClass]="getStatusClass(project.status)">
+
+                  {{ formatStatus(project.status) }}
+
+                </span>
+              </td>
+
+              <td>
+
+                <div class="progress-cell">
+
+                  <div class="progress-cell-header">
+                    <span>
+                      {{ getProgressValue(project.progress) }}%
+                    </span>
+                  </div>
+
+                  <div class="table-progress-bar">
+
+                    <div
+                      class="table-progress-fill"
+                      [style.width.%]="getProgressValue(project.progress)">
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </td>
+
+              <td>
+                <span class="employee-count">
+                  👥 {{ project.assignedEmployees }}
+                </span>
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

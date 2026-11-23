@@ -1,0 +1,241 @@
+
+<div class="employee-container">
+
+  <!-- Page Header -->
+  <div class="page-header">
+
+    <div>
+      <h2>Employee Management</h2>
+      <p>Manage and monitor all company employees</p>
+    </div>
+
+    <div class="header-actions">
+
+      <a *ngIf="isAdmin"
+         routerLink="/dashboard"
+         class="nav-btn dashboard-btn">
+        Dashboard
+      </a>
+
+      <a *ngIf="isAdmin"
+         routerLink="/projects"
+         class="nav-btn projects-btn">
+        Projects
+      </a>
+
+      <a *ngIf="isAdmin"
+         routerLink="/tasks"
+         class="nav-btn tasks-btn">
+        Task Management
+      </a>
+
+      <a *ngIf="isAdmin"
+         routerLink="/add-employee"
+         class="nav-btn add-btn">
+        + Add Employee
+      </a>
+
+      <!-- Employee My Tasks Button -->
+      <button
+        *ngIf="userRole === 'EMPLOYEE'"
+        routerLink="/my-tasks"
+        type="button"
+        class="employee-my-tasks-button">
+        📋 My Tasks
+      </button>
+
+      <button class="logout-btn" (click)="logout()">
+        Logout
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Logged-in User -->
+  <div class="user-info">
+    <span>Welcome, <strong>{{ fullName }}</strong>!</span>
+    <span class="role-badge">{{ userRole }}</span>
+  </div>
+
+  <!-- Messages -->
+  <div class="message success" *ngIf="successMessage">
+    ✓ {{ successMessage }}
+  </div>
+
+  <div class="message error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Employee Summary -->
+  <div class="summary-card">
+    <div>
+      <span class="summary-label">Total Employees</span>
+      <h3>{{ employees.length }}</h3>
+    </div>
+    <div class="summary-icon">👥</div>
+  </div>
+
+  <!-- Search and Filters -->
+  <div class="filter-section">
+
+    <div class="search-box">
+
+      <input
+        #searchInput
+        type="text"
+        placeholder="Search by name, email, department or designation..."
+        [value]="searchTerm"
+        (input)="searchEmployees($event)"
+      />
+
+      <button
+        *ngIf="searchTerm"
+        type="button"
+        class="clear-search"
+        (click)="clearSearch(searchInput)">
+        ×
+      </button>
+
+    </div>
+
+    <div class="filter-controls">
+
+      <select
+        [(ngModel)]="selectedDepartment"
+        (ngModelChange)="updateFilteredEmployees()">
+
+        <option value="">All Departments</option>
+        <option value="IT">IT</option>
+        <option value="Cloud Operation">Cloud Operation</option>
+        <option value="Digital marketing">Digital Marketing</option>
+
+      </select>
+
+      <select
+        [(ngModel)]="selectedStatus"
+        (ngModelChange)="updateFilteredEmployees()">
+
+        <option value="">All Status</option>
+        <option value="Active">Active</option>
+        <option value="Inactive">Inactive</option>
+
+      </select>
+
+      <button
+        class="clear-filter-btn"
+        (click)="clearFilters()">
+        Clear Filters
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Employee Table -->
+  <div class="employee-table-section">
+
+    <div class="table-heading">
+
+      <div>
+        <h3>Employee List</h3>
+        <p>View and manage employee information</p>
+      </div>
+
+      <span class="employee-count">
+        {{ filteredEmployees.length }} Employees
+      </span>
+
+    </div>
+
+    <div class="table-responsive">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Employee Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Department</th>
+            <th>Designation</th>
+            <th>Joining Date</th>
+            <th>Status</th>
+            <th *ngIf="isAdmin">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let employee of filteredEmployees">
+
+            <td>{{ employee.id }}</td>
+
+            <td class="employee-name">
+              {{ employee.fullName }}
+            </td>
+
+            <td>{{ employee.email }}</td>
+
+            <td>{{ employee.phone }}</td>
+
+            <td>{{ employee.department }}</td>
+
+            <td>{{ employee.designation }}</td>
+
+            <td>
+              {{ employee.joiningDate | date:'dd MMM yyyy' }}
+            </td>
+
+            <td>
+              <span
+                class="status-badge"
+                [ngClass]="employee.activeStatus ? 'active' : 'inactive'">
+                {{ employee.activeStatus ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+
+            <!-- Admin Actions -->
+            <td *ngIf="isAdmin" class="action-buttons">
+
+              <button
+                class="edit-btn"
+                (click)="editEmployee(employee.id!)">
+                Edit
+              </button>
+
+              <button
+                *ngIf="employee.activeStatus"
+                class="deactivate-btn"
+                (click)="deactivateEmployee(employee.id!)">
+                Deactivate
+              </button>
+
+              <span
+                *ngIf="!employee.activeStatus"
+                class="inactive-label">
+                Deactivated
+              </span>
+
+            </td>
+
+          </tr>
+
+          <!-- Empty State -->
+          <tr *ngIf="filteredEmployees.length === 0">
+
+            <td
+              [attr.colspan]="isAdmin ? 9 : 8"
+              class="empty-state">
+              No employees found.
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+  </div>
+
+</div>

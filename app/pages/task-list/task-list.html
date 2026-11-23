@@ -1,0 +1,347 @@
+
+<div class="task-container">
+
+  <!-- Page Header -->
+  <div class="page-header">
+
+    <div>
+      <h2>Task Management</h2>
+      <p>Manage tasks assigned to projects and employees</p>
+    </div>
+
+    <div class="header-actions">
+
+      <button
+        class="add-btn"
+        routerLink="/add-task">
+        + Add New Task
+      </button>
+
+      <button
+        class="progress-btn"
+        routerLink="/task-progress">
+        Task Progress
+      </button>
+
+      <button
+        class="back-btn"
+        routerLink="/projects">
+        Back to Projects
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- Success Message -->
+  <div
+    class="message success"
+    *ngIf="successMessage">
+
+    {{ successMessage }}
+
+  </div>
+
+  <!-- Error Message -->
+  <div
+    class="message error"
+    *ngIf="errorMessage">
+
+    {{ errorMessage }}
+
+  </div>
+
+  <!-- Loading -->
+  <div
+    class="loading"
+    *ngIf="loading">
+
+    Loading tasks...
+
+  </div>
+
+  <!-- Main Content -->
+  <ng-container *ngIf="!loading">
+
+    <!-- Search and Filters -->
+    <div class="filter-section">
+
+      <div class="filter-heading">
+
+        <div>
+          <h3>Search and Filter Tasks</h3>
+          <p>Find tasks using title, employee, project, status or priority</p>
+        </div>
+
+        <button
+          class="clear-btn"
+          (click)="clearFilters()">
+
+          Clear Filters
+
+        </button>
+
+      </div>
+
+      <div class="filter-controls">
+
+        <!-- Search -->
+        <div class="filter-group search-group">
+
+          <label>Search Tasks</label>
+
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="applyFilters()"
+            placeholder="Search task, employee or project..."
+          />
+
+        </div>
+
+        <!-- Status Filter -->
+        <div class="filter-group">
+
+          <label>Filter by Status</label>
+
+          <select
+            [(ngModel)]="selectedStatus"
+            (ngModelChange)="applyFilters()">
+
+            <option value="">All Statuses</option>
+            <option value="TO_DO">To Do</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="REVIEW">Review</option>
+            <option value="COMPLETED">Completed</option>
+
+          </select>
+
+        </div>
+
+        <!-- Priority Filter -->
+        <div class="filter-group">
+
+          <label>Filter by Priority</label>
+
+          <select
+            [(ngModel)]="selectedPriority"
+            (ngModelChange)="applyFilters()">
+
+            <option value="">All Priorities</option>
+            <option value="LOW">Low</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="HIGH">High</option>
+
+          </select>
+
+        </div>
+
+        <!-- Project Filter -->
+        <div class="filter-group">
+
+          <label>Filter by Project</label>
+
+          <select
+            [(ngModel)]="selectedProject"
+            (ngModelChange)="applyFilters()">
+
+            <option value="">All Projects</option>
+
+            <option
+              *ngFor="let project of projectOptions"
+              [value]="project.id">
+
+              {{ project.name }}
+
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- No Tasks -->
+    <div
+      class="empty-state"
+      *ngIf="tasks.length === 0">
+
+      <h3>No Tasks Found</h3>
+
+      <p>Start by creating your first task.</p>
+
+      <button
+        class="add-btn"
+        routerLink="/add-task">
+
+        Create Task
+
+      </button>
+
+    </div>
+
+    <!-- No Matching Results -->
+    <div
+      class="empty-state"
+      *ngIf="tasks.length > 0 && filteredTasks.length === 0">
+
+      <h3>No Matching Tasks</h3>
+
+      <p>Try changing your search or filter options.</p>
+
+      <button
+        class="clear-btn"
+        (click)="clearFilters()">
+
+        Clear Filters
+
+      </button>
+
+    </div>
+
+    <!-- Task Table -->
+    <div
+      class="table-wrapper"
+      *ngIf="filteredTasks.length > 0">
+
+      <div class="table-heading">
+
+        <div>
+          <h3>Task List</h3>
+          <p>View and manage all assigned tasks</p>
+        </div>
+
+        <span class="task-count">
+
+          {{ filteredTasks.length }} of
+          {{ tasks.length }} Tasks
+
+        </span>
+
+      </div>
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>ID</th>
+            <th>Task Title</th>
+            <th>Project</th>
+            <th>Assigned Employee</th>
+            <th>Start Date</th>
+            <th>Deadline</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let task of filteredTasks">
+
+            <td>{{ task.id }}</td>
+
+            <td class="task-title">
+
+              <strong>{{ task.title }}</strong>
+
+              <small>{{ task.description }}</small>
+
+            </td>
+
+            <td>
+              {{ task.project?.projectName || 'Not assigned' }}
+            </td>
+
+            <td>
+              {{ task.employee?.fullName || 'Not assigned' }}
+            </td>
+
+            <td>
+              {{
+                task.startDate
+                  ? (task.startDate | date:'dd MMM yyyy')
+                  : 'N/A'
+              }}
+            </td>
+
+            <td>
+              {{
+                task.deadline
+                  ? (task.deadline | date:'dd MMM yyyy')
+                  : 'N/A'
+              }}
+            </td>
+
+            <td>
+
+              <span
+                class="priority"
+                [ngClass]="task.priority?.toLowerCase()">
+
+                {{ task.priority || 'MEDIUM' }}
+
+              </span>
+
+            </td>
+
+            <td>
+
+              <span
+                class="status"
+                [ngClass]="getStatusClass(task.status)">
+
+                {{ formatStatus(task.status) }}
+
+              </span>
+
+            </td>
+
+            <td>
+
+              <div class="action-buttons">
+
+                <button
+                  class="view-btn"
+                  [routerLink]="['/task-details', task.id]">
+
+                  View
+
+                </button>
+
+                <button
+                  class="edit-btn"
+                  [routerLink]="['/edit-task', task.id]">
+
+                  Edit
+
+                </button>
+
+                <button
+                  class="delete-btn"
+                  (click)="deleteTask(task.id!)">
+
+                  Delete
+
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </ng-container>
+
+</div>

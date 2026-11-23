@@ -1,0 +1,82 @@
+```html
+<div class="page-container">
+  <div class="form-container">
+
+    <div class="form-header">
+      <h2>Edit Employee</h2>
+      <p>Update employee information below</p>
+    </div>
+
+    <div *ngIf="successMessage" class="success-message">
+      {{ successMessage }}
+    </div>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <form (ngSubmit)="onSubmit()">
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" name="fullName"
+            [(ngModel)]="employee.fullName" required>
+        </div>
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" name="email"
+            [(ngModel)]="employee.email" required>
+        </div>
+
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="text" name="phone"
+            [(ngModel)]="employee.phone" required>
+        </div>
+
+        <div class="form-group">
+          <label>Department</label>
+          <input type="text" name="department"
+            [(ngModel)]="employee.department" required>
+        </div>
+
+        <div class="form-group">
+          <label>Designation</label>
+          <input type="text" name="designation"
+            [(ngModel)]="employee.designation" required>
+        </div>
+
+        <div class="form-group">
+          <label>Joining Date</label>
+          <input type="date" name="joiningDate"
+            [(ngModel)]="employee.joiningDate" required>
+        </div>
+
+      </div>
+
+      <div class="status-group">
+        <label class="status-label">Employee Status</label>
+        <label class="checkbox-label">
+          <input type="checkbox" name="activeStatus"
+            [(ngModel)]="employee.activeStatus">
+          Active Employee
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="back-btn" (click)="goBack()">
+          Back
+        </button>
+
+        <button type="submit" class="update-btn">
+          Update Employee
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+```

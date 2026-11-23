@@ -1,0 +1,208 @@
+
+<div class="my-tasks-container">
+
+  <!-- Header -->
+  <div class="page-header">
+
+    <div>
+      <h1>My Tasks</h1>
+      <p>
+        Welcome, {{ fullName }}!
+        View and update your assigned tasks.
+      </p>
+    </div>
+
+    <div class="header-actions">
+
+      <button class="back-btn" (click)="goBack()">
+        Back to Dashboard
+      </button>
+
+      <button class="logout-btn" (click)="logout()">
+        Logout
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- Success Message -->
+  <div class="message success" *ngIf="successMessage">
+    {{ successMessage }}
+  </div>
+
+  <!-- Error Message -->
+  <div class="message error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="loading">
+    Loading your tasks...
+  </div>
+
+  <!-- Empty State -->
+  <div
+    *ngIf="!isLoading && tasks.length === 0"
+    class="empty-state">
+
+    <h2>No Tasks Assigned</h2>
+
+    <p>Your assigned tasks will appear here.</p>
+
+  </div>
+
+  <!-- Task Grid -->
+  <div
+    class="task-grid"
+    *ngIf="!isLoading && tasks.length > 0">
+
+    <div
+      class="task-card"
+      *ngFor="let task of tasks">
+
+      <!-- Task Heading -->
+      <div class="task-heading">
+
+        <h2>{{ task.title }}</h2>
+
+        <span class="priority">
+          {{ task.priority || 'MEDIUM' }}
+        </span>
+
+      </div>
+
+      <!-- Description -->
+      <p class="description">
+        {{ task.description || 'No description available.' }}
+      </p>
+
+      <!-- Task Information -->
+      <div class="task-info">
+
+        <p>
+          <strong>Project:</strong>
+          {{ task.project?.projectName || 'Not assigned' }}
+        </p>
+
+        <p>
+          <strong>Deadline:</strong>
+          {{ task.deadline || 'N/A' }}
+        </p>
+
+        <p>
+          <strong>Created:</strong>
+          {{ task.createdDate || 'N/A' }}
+        </p>
+
+        <p>
+          <strong>Current Status:</strong>
+
+          <span class="current-status">
+            {{ task.status }}
+          </span>
+
+        </p>
+
+      </div>
+
+      <!-- Update Status -->
+      <div class="status-section">
+
+        <label>Update Task Status</label>
+
+        <select
+          [(ngModel)]="selectedStatuses[task.id]"
+          [disabled]="updatingTasks[task.id]">
+
+          <option value="TO_DO">To Do</option>
+
+          <option value="IN_PROGRESS">
+            In Progress
+          </option>
+
+          <option value="REVIEW">Review</option>
+
+          <option value="COMPLETED">Completed</option>
+
+        </select>
+
+        <button
+          class="update-btn"
+          (click)="updateStatus(task.id)"
+          [disabled]="updatingTasks[task.id]">
+
+          {{
+            updatingTasks[task.id]
+              ? 'Updating...'
+              : 'Update Status'
+          }}
+
+        </button>
+
+      </div>
+
+      <!-- Add Comment -->
+      <div class="comment-section">
+
+        <label>Add Comment</label>
+
+        <textarea
+          [(ngModel)]="comments[task.id]"
+          placeholder="Write your task comment..."
+          rows="3"
+          maxlength="1000"
+          [disabled]="addingComments[task.id]">
+        </textarea>
+
+        <small class="character-count">
+          {{ comments[task.id]?.length || 0 }}/1000 characters
+        </small>
+
+        <button
+          class="comment-btn"
+          (click)="addComment(task.id)"
+          [disabled]="addingComments[task.id]">
+
+          {{
+            addingComments[task.id]
+              ? 'Submitting...'
+              : 'Submit Comment'
+          }}
+
+        </button>
+
+      </div>
+
+      <!-- Previous Comments -->
+      <div class="saved-comments">
+
+        <h3>Previous Comments</h3>
+
+        <div
+          *ngIf="!taskComments[task.id]?.length"
+          class="no-comments">
+
+          No comments yet.
+
+        </div>
+
+        <div
+          class="comment-item"
+          *ngFor="let comment of taskComments[task.id]">
+
+          <p>{{ comment.commentText }}</p>
+
+          <small>
+            {{ comment.createdAt ? (comment.createdAt | date:'medium') : 'Date unavailable' }}
+          </small>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

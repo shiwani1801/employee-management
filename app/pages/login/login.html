@@ -1,0 +1,105 @@
+
+<div class="login-container">
+
+  <!-- Left Information Section -->
+  <div class="login-info">
+    <div class="info-content">
+      <div class="team-icon">👥</div>
+
+      <h1>Manage Your Employees with Ease</h1>
+
+      <p>
+        A simple and secure platform to manage employee
+        information, departments and daily operations.
+      </p>
+
+      <div class="info-footer">
+        Secure • Reliable • Efficient
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Form Section -->
+  <div class="login-form-section">
+
+    <div class="login-card">
+
+      <div class="login-logo">👥</div>
+
+      <h2>Employee Management System</h2>
+
+      <p class="subtitle">Sign in to your account</p>
+
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+
+        <!-- Username -->
+        <div class="form-group">
+          <label for="username">Username</label>
+
+          <div class="input-wrapper">
+            <span class="input-icon">👤</span>
+
+            <input
+              type="text"
+              id="username"
+              name="username"
+              [(ngModel)]="username"
+              placeholder="Enter username"
+              autocomplete="username"
+              required
+            />
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label for="password">Password</label>
+
+          <div class="input-wrapper">
+            <span class="input-icon">🔒</span>
+
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              id="password"
+              name="password"
+              [(ngModel)]="password"
+              placeholder="Enter password"
+              autocomplete="current-password"
+              required
+            />
+
+            <button
+              type="button"
+              class="toggle-password"
+              (click)="showPassword = !showPassword">
+              {{ showPassword ? 'Hide' : 'Show' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Error Message -->
+        <div class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <!-- Login Button -->
+        <button
+          type="submit"
+          class="login-btn"
+          [disabled]="loginForm.invalid || isLoading">
+
+          {{ isLoading ? 'Signing in...' : 'Login' }}
+
+        </button>
+
+      </form>
+
+      <div class="security-text">
+        Secure • Reliable • Efficient
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
